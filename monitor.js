@@ -7,7 +7,6 @@ const nodemailer = require("nodemailer");
 //Importando o módulo child_process para executar comandos do sistema (ping)
 const { exec } = require("child_process");
 
-//const IP = "10.23.176.227"; // SERVIDOR
 const IP = process.env.LOCALHOST;
 const URL = `http://${IP}:3000/status`;
 
