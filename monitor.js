@@ -1,6 +1,10 @@
+//dotenv para ler variáveis de ambiente do .env
 require("dotenv").config();
+//Importando: AXIOS para fazer requisições HTTP e Nodemailer para enviar emails
 const axios = require("axios");
+//Importando o Nodemailer para enviar emails
 const nodemailer = require("nodemailer");
+//Importando o módulo child_process para executar comandos do sistema (ping)
 const { exec } = require("child_process");
 
 //const IP = "10.23.176.227"; // SERVIDOR
@@ -35,6 +39,7 @@ async function enviarEmail(mensagem) {
 }
 
 // 🔵 Verifica se a máquina está ligada (PING)
+// Explicação da função: Ela executa o comando ping para verificar se a máquina responde. Se não responder, considera a máquina offline e envia um email. Se voltar a responder, considera a máquina online e envia outro email.
 function verificarPingAsync() {
         return new Promise((resolve) => {
             exec(`ping -n 1 ${IP}`, (error) => {
@@ -57,6 +62,7 @@ function verificarPingAsync() {
     }
 
 // 🟢 Verifica se o sistema está funcionando (HTTP)
+//Explicação da função: Ela tenta acessar a URL do servidor. Se conseguir, considera o sistema online. Se não conseguir, mas a máquina estiver online, considera o sistema offline e envia um email. Se o sistema voltar a funcionar, envia outro email.
 async function verificarHTTP() {
 
         // 🚫 Se a máquina estiver offline, nem testa HTTP
@@ -83,7 +89,15 @@ async function verificarHTTP() {
     }
 
 // Loop principal
+// A cada 5 segundos, verifica o ping e o HTTP
 setInterval(async () => {
         await verificarPingAsync();
         await verificarHTTP();
     }, 5000);
+
+
+
+//Como testar o monitoramento:
+//1. Deixe o servidor rodando normalmente e observe os logs (deve mostrar "Servidor OK").
+//2. Desligue a máquina (ou desconecte da rede) e veja o log mostrar "Máquina OFFLINE" e "Sistema caiu" (se a máquina estiver ligada).
+//3. Ligue a máquina novamente e veja os logs mostrarem "Máquina voltou" e "Sistema voltou" (se o sistema voltar a funcionar).
